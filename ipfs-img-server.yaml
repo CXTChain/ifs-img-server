@@ -1,0 +1,5 @@
+port: "8090"
+uploaddir: "/tmp/"
+ipfsurl: "http://localhost:5001/api/v0/add?recursive=false"
+recursive: false
+quieter: true
