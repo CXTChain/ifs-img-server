@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,7 +10,9 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -27,7 +30,9 @@ func upload(c *gin.Context) {
 
 	// save locat
 	fileName := file.Filename
-	dst := viper.GetString("uploaddir") + fileName
+	fileNameMd5 := md5Str(fmt.Sprintf("%i", time.Now().Unix()))
+	fileSuffix := path.Ext(fileName)
+	dst := viper.GetString("uploaddir") + fileNameMd5 + fileSuffix
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": 0,
@@ -47,7 +52,7 @@ func upload(c *gin.Context) {
 	// success
 	c.JSON(http.StatusOK, gin.H{
 		"success": 1,
-		"data":    map[string]string{"hash": hash},
+		"data":    map[string]string{"ipfs": hash, "local": fileNameMd5 + fileSuffix},
 	})
 }
 
@@ -103,4 +108,10 @@ func uploadToIPFS(filePath string) (string, error) {
 	hash := data["Hash"].(string)
 
 	return hash, nil
+}
+
+func md5Str(str string) string {
+	data := []byte(str)
+	has := md5.Sum(data)
+	return fmt.Sprintf("%x", has)
 }
