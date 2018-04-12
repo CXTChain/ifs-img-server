@@ -11,7 +11,7 @@ import (
 func main() {
 	// config
 	viper.SetConfigName("ipfs-img-server")
-	viper.AddConfigPath("./")
+	viper.AddConfigPath(os.Getenv("HOME"))
 	viper.SetConfigType("yaml")
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("Fatal error config file: %s \n", err)
@@ -21,7 +21,7 @@ func main() {
 	router := gin.Default()
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB
-	router.Static("/", "./public")
+	router.Static("/", viper.GetString("publicdir"))
 
 	// router
 

@@ -3,3 +3,4 @@ uploaddir: "/gopath/src/github.com/luren5/ipfs-img-server/public/images/"
 ipfsurl: "http://localhost:5001/api/v0/add?recursive=false"
 recursive: false
 quieter: true
+publicdir: "/gopath/src/github.com/luren5/ipfs-img-server/public/"
